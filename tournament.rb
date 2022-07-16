@@ -56,16 +56,14 @@ def getting_stats_type(key, link)
     urls = HTTParty.get(link)["stats"]
     link2 = HTTParty.get(link)["types"]
     for x in link2
-        type = x["type"]["name"]
+        type << x["type"]["name"]
     end
     for i in urls
         stat_name = i["stat"]["name"]
         stat = i["base_stat"]
         stats << [stat_name, stat]
     end
-    for y in type
-        stats << ["type",type]
-    end
+    stats << ["type",type]
     poke << [key, stats.to_h]
     return poke.to_h
 end
@@ -73,9 +71,9 @@ end
 puts get_base_data(pokemon_limit)
 
 
-def poke_tournament()
-    puts "hi"
-end
+# def poke_tournament()
+#     puts "hi"
+# end
 
 # poke_tournament()
 
