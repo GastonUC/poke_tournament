@@ -4,8 +4,8 @@
 
 # Se utilzará un formato estándar de campeonato, serán 4 batallas por lado A y 4 batallas en el lado B.
 
-hash = {"charmander" => {"hp":56, "att":61, "def":30, "satt":58, "sdef":54, "spd":34, "type":"fire"}, "bulbasaur" => {"hp":56, "att":80, "def":48, "satt":60, "sdef":70, "spd":43, "type":"water"}}
-puts hash.values
+# hash = {"charmander" => {"hp":56, "att":61, "def":30, "satt":58, "sdef":54, "spd":34, "type":"fire"}, "bulbasaur" => {"hp":56, "att":80, "def":48, "satt":60, "sdef":70, "spd":43, "type":"water"}}
+# puts hash["charmander"][:hp]
 
 require 'httparty'
 #require 'poke-api-v2'
@@ -54,11 +54,28 @@ def get_base_data(uri, poke_lim)
     return url
 end
 
-puts get_base_data(uri, pokemon_limit)
+# puts get_base_data(uri, pokemon_limit)
 
 def getting_stats()
-
+    link = HTTParty.get("https://pokeapi.co/api/v2/pokemon/101/")["stats"]
+    stats = []
+    for i in link
+        stat_name = i["stat"]["name"]
+        # puts stat_name
+        stat = i["base_stat"]
+        # puts stat
+        stats << [stat_name, stat]
+        # stats = {"#{stat_name}" => "#{stat}"}
+        # stats[:stat_name] << :stat 
+        # puts stats
+        # return stats
+        # puts stats
+    end
+    return stats.to_h
+    # puts stats
 end
+
+puts getting_stats()
 
 # Para obtener los base_stat
 # response = HTTParty.get("https://pokeapi.co/api/v2/pokemon/90/")['stats']
