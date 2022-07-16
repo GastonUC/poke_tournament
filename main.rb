@@ -4,7 +4,7 @@
 
 # Se utilzará un formato estándar de campeonato, serán 4 batallas por lado A y 4 batallas en el lado B.
 
-# Form N3
+# Form N1
 # hash = {"charmander" => {"hp":56, "att":61, "def":30, "satt":58, "sdef":54, "spd":34, "type":"fire"}, "bulbasaur" => {"hp":56, "att":80, "def":48, "satt":60, "sdef":70, "spd":43, "type":"water"}}
 # puts hash["charmander"][:hp]
 
@@ -26,7 +26,7 @@ def get_pokemons(poke_lim)
     poke_data = []
     # response = HTTParty.get("#{uri}?limit=#{poke_lim}")
     response = HTTParty.get("https://pokeapi.co/api/v2/pokemon?limit=#{poke_lim}")
-    pokemons = response['results'].take(2) #cambiar por sample(8)
+    pokemons = response['results'].sample(8)
 
     for a in pokemons
         poke_name = a['name']
@@ -61,24 +61,49 @@ def getting_stats_types(key, link)
     return poke.to_h
 end
 
-def getData(poke_limit)
-    pokemons1 = get_base_data(poke_limit)
-    for contestant in pokemons1
-        puts contestant
-    end
 
+# Metodo para conseguir los base_stat mas legibles
+def getData(poke_limit)
+    pokemons = get_pokemons(poke_limit)
+    # for contestant in pokemons
+    #     puts contestant
+    # end
     
-    hp = pokemons1[0]
+    hp = pokemons[0] #Hardcoded, cambiar por iteracion sobre 'pokemons'
     for x in hp
         hp = x[1]["hp"]
     end
 
-    att = get_base_data
+    att = pokemons[0]
+    for x in att
+        att = x[1]["attack"]
+    end
+
+    defense = pokemons[0]
+    for x in defense
+        defense = x[1]["defense"]
+    end
+
+    sp_att = pokemons[0]
+    for x in sp_att
+        sp_att = x[1]["special-attack"]
+    end
+    
+    sp_def = pokemons[0]
+    for x in sp_def
+        sp_def = x[1]["special-defense"]
+    end
+    
+    spd = pokemons[0]
+    for x in spd
+        spd = x[1]["speed"]
+    end
+
+    return hp, att, defense, sp_att, sp_def, spd
 end
-# getData(pokemon_limit)
 
-puts get_pokemons(pokemon_limit)
 
+# Metodo para ver que pokemon inicia, de momento hardcodeado
 def who_start(poke_lim)
     poke_A = get_pokemons(poke_lim)[0]
     for r in poke_A
@@ -96,21 +121,53 @@ def who_start(poke_lim)
     end
 end
 
-who_start(pokemon_limit)
 
-# def multiplier() TIPO
-#     case (type)
-#     when "Acero"
 
+def main(poke_lim)
+    get_pokemons(poke_lim)
+    # getData(poke_lim)
+    who_start(poke_lim)
+end
+main(pokemon_limit)
+
+
+types_pokemons = %w[normal fire water electric grass ice fighting poison ground flying psychic bug rock ghost dragon]
+# def damage_multiplier(getData(poke_lim))
+#     # case (type = normal)
+#     # when "Acero"
+    
+#     if()
+#     end
 # end
+
+def battle(competitors)
+    for compe in competitors
+        pokemon << compe.keys
+        # puts pokemon[0]
+    end
+    pokemon.each_index {|index| puts "#{pokemon[index]} VS #{pokemon[index+1]}"}
+    # puts "#{pokemon} VS #{pokemon}"
+
+end
+competitors = get_pokemons(pokemon_limit)
+battle(competitors)
 
 
 def getDices()
+
 end
+
+probability = getDices()
+# turn(probability)
+# def turn(probability)
+#     if (probability)
+#     end
+# end
 
 
 # x = {"haunter"=>{"hp"=>45, "attack"=>50, "defense"=>45, "special-attack"=>115, "special-defense"=>55, "speed"=>95, "type"=>["ghost", "poison"]}}
 # puts x["haunter"]["type"][0]
+# puts x.dig 'haunter', 'hp'
 
 # def poke_tournament()
 #     puts "hi"
