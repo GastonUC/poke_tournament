@@ -48,34 +48,36 @@ end
 def get_base_data(uri, poke_lim)
     url = []
     array = get_pokemons(uri, poke_lim)
+
     for a in array
-        url << a['url']
+        name = a['name']
+        link = a['url']
+        url << [name, link]
     end
-    return url
+
+    url.each do|key, value|
+        # getting_stats(link)
+        getting_stats(key, value)
+    end
+    # return url.to_h
 end
 
-# puts get_base_data(uri, pokemon_limit)
-
-def getting_stats()
-    link = HTTParty.get("https://pokeapi.co/api/v2/pokemon/101/")["stats"]
+def getting_stats(key, link)
+    poke = []
     stats = []
+    link = HTTParty.get(link)["stats"]
     for i in link
         stat_name = i["stat"]["name"]
-        # puts stat_name
         stat = i["base_stat"]
-        # puts stat
         stats << [stat_name, stat]
-        # stats = {"#{stat_name}" => "#{stat}"}
-        # stats[:stat_name] << :stat 
-        # puts stats
-        # return stats
-        # puts stats
+        poke << [key, stats.to_h]
     end
-    return stats.to_h
-    # puts stats
+    return poke.to_h
 end
 
-puts getting_stats()
+# getPokemons = get_base_data(uri, pokemon_limit)[:value]
+# puts getting_stats()
+puts get_base_data(uri, 151)
 
 # Para obtener los base_stat
 # response = HTTParty.get("https://pokeapi.co/api/v2/pokemon/90/")['stats']
