@@ -7,77 +7,70 @@
 # hash = {"charmander" => {"hp":56, "att":61, "def":30, "satt":58, "sdef":54, "spd":34, "type":"fire"}, "bulbasaur" => {"hp":56, "att":80, "def":48, "satt":60, "sdef":70, "spd":43, "type":"water"}}
 # puts hash["charmander"][:hp]
 
+# Form N2
+# hash = {"grimer"=>{"hp"=>80, "attack"=>80, "defense"=>50, "special-attack"=>40, "special-defense"=>50, "speed"=>25, "type"=>"poison"}}
+# puts hash["grimer"]["type"]
+
 require 'httparty'
 #require 'poke-api-v2'
 
+#Primeros 151 Pokemons
 pokemon_limit = 151
 uri = "https://pokeapi.co/api/v2/pokemon"
 
 #Method to get all the pokemons, select and return 8 contestants
-def get_pokemons(uri, poke_lim)
-    response = HTTParty.get("#{uri}?limit=#{poke_lim}")
+def get_pokemons(poke_lim)
+    # response = HTTParty.get("#{uri}?limit=#{poke_lim}")
+    response = HTTParty.get("https://pokeapi.co/api/v2/pokemon?limit=#{poke_lim}")
     pokemons = response['results'].sample(8)
     return pokemons
 end
 
-#Method to get 8 random pokemons from the list
-# def get_contestant(uri, poke_lim)
-#     return pokemons
-# end
 
-def base_stats(uri)
-    stat 
-end
-
-#Method to get the type of the pokemon
-def get_pokemon_type(contestants, uri)
-    for poke in contestants
-        response = HTTParty.get("#{uri}/#{poke}")
-    end
-    return response['types']
-    # response = HTTParty.get("#{uri}/charmander")
-end
-
-
-# puts get_contestant(uri, pokemon_limit)
-
-# contestants = get_pokemons(uri, pokemon_limit)
-# puts contestants
-
-# Get Pokemon links
-def get_base_data(uri, poke_lim)
-    url = []
-    array = get_pokemons(uri, poke_lim)
+# Obtiene los links a las paginas correspondientes a los pokemon y los envia al metodo para obtener los base_stats y el tipo
+def get_base_data(poke_lim)
+    pok_link = []
+    pok_data = []
+    array = get_pokemons(poke_lim)
 
     for a in array
         name = a['name']
         link = a['url']
-        url << [name, link]
+        pok_link << [name, link]
     end
 
-    url.each do|key, value|
-        # getting_stats(link)
-        getting_stats(key, value)
+    pok_link.each do|key, value|
+        pok_data << getting_stats_type(key, value)
     end
-    # return url.to_h
+    return pok_data
 end
 
-def getting_stats(key, link)
+
+# Obtiene los base_stats y los tipos
+def getting_stats_type(key, link)
     poke = []
     stats = []
-    link = HTTParty.get(link)["stats"]
-    for i in link
+    urls = HTTParty.get(link)["stats"]
+    link2 = HTTParty.get(link)["types"]
+    for x in link2
+        type1 = x["type"]["name"]
+    end
+    for i in urls
         stat_name = i["stat"]["name"]
         stat = i["base_stat"]
         stats << [stat_name, stat]
-        poke << [key, stats.to_h]
     end
+    stats << ["type",type1]
+    poke << [key, stats.to_h]
     return poke.to_h
 end
 
-# getPokemons = get_base_data(uri, pokemon_limit)[:value]
-# puts getting_stats()
-puts get_base_data(uri, 151)
+puts get_base_data(pokemon_limit)
+
+# link = HTTParty.get("https://pokeapi.co/api/v2/pokemon/charmander/")["types"]
+# for x in link
+#     puts x["type"]["name"]
+# end
 
 # Para obtener los base_stat
 # response = HTTParty.get("https://pokeapi.co/api/v2/pokemon/90/")['stats']
@@ -111,16 +104,3 @@ puts get_base_data(uri, 151)
 #     end
     
 # end
-
-# poke = Pokemons.new()
-# puts poke.get_contestant
-# puts poke.max_pokemons(151)
-
-
-# Test if the header gets into the output array
-# pokemons.push("next")
-# ans = pokemons.include?('count' || 'next')
-# while !ans
-#     puts "finish"
-# end
-# puts "not finish"
