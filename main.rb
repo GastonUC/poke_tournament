@@ -19,37 +19,30 @@ require 'httparty'
 pokemon_limit = 151
 uri = "https://pokeapi.co/api/v2/pokemon"
 
-#Method to get all the pokemons, select and return 8 contestants
+# Method to get all the pokemons, select and return 8 contestants
+# Obtiene los links a las paginas correspondientes a los pokemon y los envia al metodo para obtener los base_stats y el tipo
 def get_pokemons(poke_lim)
+    poke_links = []
+    poke_data = []
     # response = HTTParty.get("#{uri}?limit=#{poke_lim}")
     response = HTTParty.get("https://pokeapi.co/api/v2/pokemon?limit=#{poke_lim}")
-    pokemons = response['results'].sample(8)
-    return pokemons
-end
+    pokemons = response['results'].take(2) #cambiar por sample(8)
 
-
-# Obtiene los links a las paginas correspondientes a los pokemon y los envia al metodo para obtener los base_stats y el tipo
-# Migrar metodo a get_pokemons
-def get_base_data(poke_lim)
-    pok_link = []
-    pok_data = []
-    array = get_pokemons(poke_lim)
-
-    for a in array
-        name = a['name']
-        link = a['url']
-        pok_link << [name, link]
+    for a in pokemons
+        poke_name = a['name']
+        poke_link = a['url']
+        poke_links << [poke_name, poke_link]
     end
 
-    pok_link.each do|key, value|
-        pok_data << getting_stats_type(key, value)
+    poke_links.each do|key, value|
+        poke_data << getting_stats_types(key, value)
     end
-    return pok_data
+    return poke_data
 end
 
 
 # Obtiene los base_stats y los tipos
-def getting_stats_type(key, link)
+def getting_stats_types(key, link)
     poke = []
     stats = []
     type = []
@@ -68,8 +61,56 @@ def getting_stats_type(key, link)
     return poke.to_h
 end
 
-puts get_base_data(pokemon_limit)
+def getData(poke_limit)
+    pokemons1 = get_base_data(poke_limit)
+    for contestant in pokemons1
+        puts contestant
+    end
 
+    
+    hp = pokemons1[0]
+    for x in hp
+        hp = x[1]["hp"]
+    end
+
+    att = get_base_data
+end
+# getData(pokemon_limit)
+
+puts get_pokemons(pokemon_limit)
+
+def who_start(poke_lim)
+    poke_A = get_pokemons(poke_lim)[0]
+    for r in poke_A
+       spdA = r[1]["speed"]
+    end
+    poke_B = get_pokemons(poke_lim)[1]
+    for r in poke_B
+        spdB = r[1]["speed"]
+    end
+    
+    if (spdA >= spdB)
+        puts "Pokemon A, Empieza la batalla!"
+    else
+        puts "Pokemon B, Empieza la batalla!"
+    end
+end
+
+who_start(pokemon_limit)
+
+# def multiplier() TIPO
+#     case (type)
+#     when "Acero"
+
+# end
+
+
+def getDices()
+end
+
+
+# x = {"haunter"=>{"hp"=>45, "attack"=>50, "defense"=>45, "special-attack"=>115, "special-defense"=>55, "speed"=>95, "type"=>["ghost", "poison"]}}
+# puts x["haunter"]["type"][0]
 
 # def poke_tournament()
 #     puts "hi"
